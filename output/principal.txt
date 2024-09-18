@@ -1,0 +1,8 @@
+Cor 1: Verde
+Cor 2: Marfim
+Tamanho 1: 1.00 
+Tamanho 2: 2.00 
+Código 1: 11 
+Código 2: 22 
+Valor 1: 11.00 
+Valor 2: 22.00 

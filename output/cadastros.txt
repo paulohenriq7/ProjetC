@@ -1,0 +1,4 @@
+Cor 1: Marfim
+Tamanho 1: 22.00 
+Código 1: 222 
+Valor 1: 123.00 
