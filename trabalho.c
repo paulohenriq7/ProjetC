@@ -2,13 +2,33 @@
 #include <stdlib.h>
 #include <locale.h>
 
-void atualizar_cadastro(int cor[], int codigo[], float tamanho[], float valor[], int x){
+typedef struct {
+    float custo;
+    float lucro;
+    float valor;
+} Lucro_total;
+
+Lucro_total calcular_lucro(Lucro_total p) {
+    p.custo = p.valor * 0.60; 
+    p.lucro = p.valor - p.custo; 
+    return p;
+}
+
+void atualizar_cadastro(int cor[], int codigo[], float tamanho[], Lucro_total lucros[], int x){
 int posicao, op;
+
+FILE *arquivo;
 
 printf("Você deseja atualizar algum item?\n");
 printf("1-Sim\n");
 printf("2-Não\n");
 scanf("%i", &op);
+
+    arquivo = fopen("atualizar.txt", "a");
+      if (arquivo == NULL) {
+       printf("Erro ao abrir o arquivo!\n");
+        return;
+        }
 
 if (op==1)
 {
@@ -38,26 +58,32 @@ if (op==1)
         if (cor[i]==1)
         {
             printf("Cor %d: Verde\n", i + 1);
+            fprintf(arquivo, "Cor %d: Verde\n", i + 1); 
         }
         else if (cor[i]==2)
         {
             printf("Cor %d: Marfim\n", i + 1);
+            fprintf(arquivo, "Cor %d: Marfim\n", i + 1); 
         }
          else if (cor[i]==3)
         {
             printf("Cor %d: Azul\n", i + 1);
+            fprintf(arquivo, "Cor %d: Azul\n", i + 1); 
         }
          else if (cor[i]==4)
         {
             printf("Cor %d: Camurça\n", i + 1);
+            fprintf(arquivo, "Cor %d: Camurça\n", i + 1); 
         }
          else if (cor[i]==5)
         {
             printf("Cor %d: Areia\n", i + 1);
+            fprintf(arquivo, "Cor %d: Areia\n", i + 1); 
         }
         else
         {
             printf("Sem tintas disponíveis.\n");
+            fprintf(arquivo, "Sem tintas disponíveis.\n");
         }
     }
     }
@@ -71,13 +97,14 @@ if (op==1)
         printf("Sem posição cadastrada.\n");
 }
         else {
-         printf("Digite o novo tamanho do item %d: ", posicao);
+         printf("Digite o novo tamanho (em litros) do item %d: ", posicao);
          scanf("%f", &tamanho[posicao - 1]);
 }
     printf("---CADASTROS ATUALIZADOS---\n");
     for (int i = 0; i < x; i++)
     {
-        printf("Tamanho %d: %.2f \n", i + 1, tamanho[i]);
+        printf("Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
+        fprintf(arquivo, "Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
     }
     }
 
@@ -97,6 +124,7 @@ if (op==1)
     for ( int i = 0; i < x; i++)
     {
         printf("Código %d: %i \n", i + 1, codigo[i]);
+        fprintf(arquivo, "Código %d: %i \n", i + 1, codigo[i]);
     }
     }
 
@@ -110,12 +138,16 @@ if (op==1)
 }
         else {
          printf("Digite o novo valor do item %d: ", posicao);
-         scanf("%f", &valor[posicao - 1]);
+         scanf("%f", &lucros[posicao - 1].valor);
+         lucros[posicao - 1] = calcular_lucro(lucros[posicao - 1]);
 }
  printf("---CADASTROS ATUALIZADOS---\n");
     for (int i = 0; i < x; i++)
     {
-        printf("Valor %d: %.2f \n", i + 1, valor[i]);
+        printf("Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        printf("Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
+        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        fprintf(arquivo, "Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
     }
     }
 
@@ -131,14 +163,14 @@ if (op==1)
          printf("Digite a nova cor do item %d: ", posicao);
          scanf("%d", &cor[posicao - 1]);
 }
-    printf("Informe a posição do tamanho (1 a %i) que deseja alterar: ", x);
+    printf("Informe a posição do tamanho (em litros) (1 a %i) que deseja alterar: ", x);
     scanf("%i", &posicao);
 
         if (posicao < 1 || posicao > x) {
         printf("Sem posição cadastrada.\n");
 }
         else {
-         printf("Digite o novo tamanho do item %d: ", posicao);
+         printf("Digite o novo tamanho (em litros) do item %d: ", posicao);
          scanf("%f", &tamanho[posicao - 1]);
 }
     printf("Informe a posição do código (1 a %i) que deseja alterar: ", x);
@@ -160,7 +192,8 @@ if (op==1)
 }
         else {
          printf("Digite o novo valor do item %d: ", posicao);
-         scanf("%f", &valor[posicao - 1]);
+         scanf("%f", &lucros[posicao - 1].valor);
+         lucros[posicao - 1] = calcular_lucro(lucros[posicao - 1]);
 }
      printf("---CADASTROS ATUALIZADOS---\n");
     for (int i = 0; i < x; i++)
@@ -168,39 +201,50 @@ if (op==1)
         if (cor[i]==1)
         {
             printf("Cor %d: Verde\n", i + 1);
+            fprintf(arquivo, "Cor %d: Verde\n", i + 1); 
         }
         else if (cor[i]==2)
         {
             printf("Cor %d: Marfim\n", i + 1);
+            fprintf(arquivo, "Cor %d: Marfim\n", i + 1); 
         }
          else if (cor[i]==3)
         {
             printf("Cor %d: Azul\n", i + 1);
+            fprintf(arquivo, "Cor %d: Azul\n", i + 1); 
         }
          else if (cor[i]==4)
         {
             printf("Cor %d: Camurça\n", i + 1);
+            fprintf(arquivo, "Cor %d: Camurça\n", i + 1); 
         }
          else if (cor[i]==5)
         {
             printf("Cor %d: Areia\n", i + 1);
+            fprintf(arquivo, "Cor %d: Areia\n", i + 1); 
         }
         else
         {
             printf("Sem tintas disponíveis.\n");
+            fprintf(arquivo, "Cor %d: Sem tintas disponíveis. \n", i + 1); 
         }
     }
     for (int i = 0; i < x; i++)
     {
-        printf("Tamanho %d: %.2f \n", i + 1, tamanho[i]);
+        printf("Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
+        fprintf(arquivo, "Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
     }
      for (int i = 0; i < x; i++)
     {
         printf("Código %d: %i \n", i + 1, codigo[i]);
+        fprintf(arquivo, "Código %d: %i \n", i + 1, codigo[i]);
     }
     for (int i = 0; i < x; i++)
     {
-        printf("Valor %d: %.2f \n", i + 1, valor[i]);
+        printf("Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        printf("Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
+        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        fprintf(arquivo, "Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
     }
     }
 }
@@ -210,9 +254,12 @@ else
     printf("Próximo menu\n");
 }
 
+fclose(arquivo);
+printf("Os cadastros foram salvos em 'atualizar.txt'.\n");
+
 }
 
-void remover_cadastro(int cor[], int codigo[], float tamanho[], float valor[], int x) {
+void remover_cadastro(int cor[], int codigo[], float tamanho[], Lucro_total lucros[], int x) {
     
     int op, posicao;
     printf("Você deseja remover algum item?\n");
@@ -321,7 +368,7 @@ void remover_cadastro(int cor[], int codigo[], float tamanho[], float valor[], i
     }
 
     for (int i = posicao; i < x - 1; i++) {
-        valor[i] = valor[i + 1];
+        lucros[i] = lucros[i + 1];
     }
     x--;
          }
@@ -406,7 +453,7 @@ x++;
     }
 
     for (int i = posicao; i < x - 1; i++) {
-        valor[i] = valor[i + 1];
+        lucros[i] = lucros[i + 1];
     }
     x--;
          }
@@ -420,7 +467,7 @@ else
 }
 }
 
-void verificadora(int cor[], int codigo[], float tamanho[], float valor[], int x) {
+void verificadora(int cor[], int codigo[], float tamanho[], Lucro_total lucros[], int x) {
     int op;
     //arquivo
     FILE *arquivo; 
@@ -431,7 +478,7 @@ void verificadora(int cor[], int codigo[], float tamanho[], float valor[], int x
     scanf("%i", &op);
 
     if (op == 1) {
-        arquivo = fopen("cadastros.txt", "w");
+        arquivo = fopen("cadastros.txt", "a");
         if (arquivo == NULL) {
             printf("Erro ao abrir o arquivo!\n");
             return;
@@ -463,8 +510,8 @@ void verificadora(int cor[], int codigo[], float tamanho[], float valor[], int x
         x++;
         x--;
         for (int i = 0; i < x; i++) {
-            printf("Tamanho %d: %.2f \n", i + 1, tamanho[i]);
-            fprintf(arquivo, "Tamanho %d: %.2f \n", i + 1, tamanho[i]);
+            printf("Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
+            fprintf(arquivo, "Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
         }
 
         x++;
@@ -477,17 +524,20 @@ void verificadora(int cor[], int codigo[], float tamanho[], float valor[], int x
         x++;
         x--;
         for (int i = 0; i < x; i++) {
-            printf("Valor %d: %.2f \n", i + 1, valor[i]);
-            fprintf(arquivo, "Valor %d: %.2f \n", i + 1, valor[i]);
+        printf("Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        printf("Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
+        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        fprintf(arquivo, "Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
         }
 
-        // Fecha o arquivo após escrever os dados
         fclose(arquivo);
-        printf("Os dados foram salvos em 'cadastros.txt'.\n");
+        printf("Os cadastros foram salvos em 'cadastros.txt'.\n");
     } else {
         printf("Programa encerrado.\n");
     }
 }
+
+
 
 
 //função principal
@@ -511,9 +561,11 @@ printf("5- tudo\n");
 scanf("%i", &op);
 
 int cor[x], codigo[x];
-float tamanho[x], valor[x];
+float tamanho[x];
 
-      arquivo = fopen("principal.txt", "w");
+Lucro_total lucros[x];
+
+      arquivo = fopen("principal.txt", "a");
         if (arquivo == NULL) {
             printf("Erro ao abrir o arquivo!\n");
             return;
@@ -576,8 +628,8 @@ else if (op==2)
     printf("---CADASTROS REALIZADOS---\n");
     for ( i = 0; i < x; i++)
     {
-        printf("Tamanho %d: %.2f \n", i + 1, tamanho[i]);
-        fprintf(arquivo, "Tamanho %d: %.2f \n", i + 1, tamanho[i]);
+        printf("Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
+        fprintf(arquivo, "Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
     }
 }
 else if (op==3)
@@ -599,13 +651,17 @@ else if (op==4)
     for ( i = 0; i < x; i++)
     {
         printf("Qual o valor da lata %i?\n", i+1);
-        scanf("%f", &valor[i]);
+        scanf("%f", &lucros[i].valor);
+        lucros[i].custo = lucros[i].valor * 0.60;
+        lucros[i].lucro = lucros[i].valor - lucros[i].custo;
     }
  printf("---CADASTROS REALIZADOS---\n");
     for ( i = 0; i < x; i++)
     {
-        printf("Valor %d: %.2f \n", i + 1, valor[i]);
-        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, valor[i]);
+        printf("Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        printf("Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
+        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        fprintf(arquivo, "Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
     }
 
 }
@@ -623,7 +679,7 @@ else if (op==5)
     }
       for ( i = 0; i < x; i++)
     {
-        printf("Qual o tamanho da lata %i?\n", i+1);
+        printf("Qual o tamanho (em litros) da lata %i?\n", i+1);
         scanf("%f", &tamanho[i]);
     }
     for ( i = 0; i < x; i++)
@@ -634,7 +690,9 @@ else if (op==5)
      for ( i = 0; i < x; i++)
     {
         printf("Qual o valor da lata %i?\n", i+1);
-        scanf("%f", &valor[i]);
+        scanf("%f", &lucros[i].valor);
+        lucros[i].custo = lucros[i].valor * 0.60;
+        lucros[i].lucro = lucros[i].valor - lucros[i].custo;
     }
      printf("---CADASTROS REALIZADOS---\n");
     for ( i = 0; i < x; i++)
@@ -673,7 +731,7 @@ else if (op==5)
     for ( i = 0; i < x; i++)
     {
         printf("Tamanho %d: %.2f \n", i + 1, tamanho[i]);
-        fprintf(arquivo, "Tamanho %d: %.2f \n", i + 1, tamanho[i]);
+        fprintf(arquivo, "Tamanho (em litros) %d: %.2f \n", i + 1, tamanho[i]);
     }
      for ( i = 0; i < x; i++)
     {
@@ -682,8 +740,10 @@ else if (op==5)
     }
     for ( i = 0; i < x; i++)
     {
-        printf("Valor %d: %.2f \n", i + 1, valor[i]);
-        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, valor[i]);
+        printf("Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        printf("Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
+        fprintf(arquivo, "Valor %d: %.2f \n", i + 1, lucros[i].valor);
+        fprintf(arquivo, "Lucro %d: %.2f \n", i + 1, lucros[i].lucro);
     }
 }
 else
@@ -691,8 +751,11 @@ else
     printf("Escolha inválida");
 }
 
-atualizar_cadastro(cor, codigo, tamanho, valor, x);
-remover_cadastro(cor, codigo, tamanho, valor, x);
-verificadora(cor, codigo, tamanho, valor, x);
+fclose(arquivo);
+printf("Os cadastros foram salvos em 'principal.txt'.\n");
+
+atualizar_cadastro(cor, codigo, tamanho, lucros, x);
+remover_cadastro(cor, codigo, tamanho, lucros, x);
+verificadora(cor, codigo, tamanho, lucros, x);
 
 }
